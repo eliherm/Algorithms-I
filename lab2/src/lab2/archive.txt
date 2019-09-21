@@ -1,0 +1,32 @@
+// Create a 2D array of linkedlists as the adjacency matrix
+		@SuppressWarnings("unchecked") LinkedList<Integer>[][] matrix = new LinkedList[numVertices][numVertices];
+		
+		// Initialize the adjacency matrix to zeros
+		for (int i = 0; i < numVertices; i++) {
+			for (int j = 0; j < numVertices; j++) {
+				matrix[i][j] = new LinkedList<Integer>();
+				matrix[i][j].add(-1);
+			}
+		}
+		
+		for (int i = 0; i < 14; i++) {
+			if (matrix[testData[i][0]][testData[i][1]].get(0) == -1) {
+				matrix[testData[i][0]][testData[i][1]].add(0, testData[i][2]);
+				matrix[testData[i][0]][testData[i][1]].add(1, testData[i][3]);
+			} else {
+				matrix[testData[i][0]][testData[i][1]].add(testData[i][2]);
+				matrix[testData[i][0]][testData[i][1]].add(testData[i][3]);
+			}
+			
+		}
+		
+		for (int i = 0; i < numVertices; i++) {
+			for (int j = 0; j < numVertices; j++) {
+				for (int k = 0; k < matrix[i][j].size(); k++) {
+					System.out.print(matrix[i][j].get(k));
+					System.out.print(", ");
+				}
+				System.out.print("\t\t\t");
+			}
+			System.out.println();
+		}
