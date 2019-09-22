@@ -1,5 +1,0 @@
-Optimal route from 93 to 49
----------------------------
-
-Flight path: 93 -> 124 -> 49
-Arrival time at city 49: 9

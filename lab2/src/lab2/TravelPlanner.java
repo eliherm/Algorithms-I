@@ -91,6 +91,12 @@ public class TravelPlanner {
 					leastArrival = estimate[i];
 				}
 			}
+			
+			// Check if the path does not exist
+			if (nextCity == -1) {
+				System.out.println("Error: The path " + source + " to " + destination + " does not exist");
+				System.exit(1);
+			}
 						
 			// Update the city as reached
 			reached[nextCity] = true;
