@@ -1,14 +1,19 @@
+/**
+ * Name: Elikem Hermon
+ * Student Number: 20075527
+ * I certify that this submission contains my own work, except as noted.
+ */
+
 package lab2;
 
 import java.util.Stack;
 
 public class TravelPlanner {
 	
-	private int numCities;		// The number of cities in the graph
+	private int numCities;
+	private int numEdges;
 	private int source;
 	private int destination;
-	private int currentTime;	// The arrival time of the previous flight	
-	private int currentCity;	
 	private int[] cost;			
 	private int[] predecessor;
 	
@@ -18,73 +23,103 @@ public class TravelPlanner {
 		System.exit(1);
 	}
 	
-	public TravelPlanner(int[][] edges, int numCities, int source, int destination) {
+	public TravelPlanner(int[][] edges, int[] cityIndex, int numCities, int numEdges, int source, int destination) {
 		this.numCities = numCities;
+		this.numEdges = numEdges;
 		this.source = source;
 		this.destination = destination;
-		currentTime = 0;
-		currentCity = 0;
 		cost = new int[numCities];
 		predecessor = new int[numCities];
 		
-		findPaths(edges); // Find the best route to the destination
+		findPaths(edges, cityIndex);
 	}
 		
-	private void findPaths(int[][] edges) {
-		boolean[] reached = new boolean[numCities]; // Holds the reached status for each city
+	private void findPaths(int[][] edges, int[] cityIndex) {
+		if ((source > numCities - 1) || (destination > numCities - 1)) {
+			System.out.println("Error: Invalid city");
+			System.exit(1);
+		}
+		
+		int[] estimate = new int[numCities];
+		boolean[] candidate = new boolean[numCities];
+		boolean[] reached = new boolean[numCities];
+		int currentTime; // The arrival time of the previous flight	
 		
 		// Initialize the source city
-		currentCity = source;
 		cost[source] = 0;
-		currentTime = -1;
+		estimate[source] = 0;
 		reached[source] = true;
+		candidate[source] = false;
+		predecessor[source] = -1;
+		currentTime = -1;
 		
 		// Initialize the other cities as not reached
 		for (int i = 0; i < numCities; i++) {
 			if (i != source) {
+				estimate[i] = Integer.MAX_VALUE;
 				reached[i] = false;
+				candidate[i] = false;
 			}
 		}
 		
-		while(true) {
-			int iterator = 0;
+		// Update the estimates of the neighbours
+		int iterator = cityIndex[source];
+		while (edges[iterator][0] == source) {
+			// Check if the arrival time is less than the estimate
+			if (edges[iterator][3] < estimate[edges[iterator][1]]) { 
+				estimate[edges[iterator][1]] = edges[iterator][3];
+				candidate[edges[iterator][1]] = true;
+				predecessor[edges[iterator][1]] = source;
+			}
+			
+			// Check for the end of the edge array
+			if (iterator == (numEdges - 1))
+				break;
+			
+			iterator++;
+		}
+		
+		while (true) {
 			int leastArrival = Integer.MAX_VALUE;
-			int nextCity = 0;
+			int nextCity = -1;
 			
-			// Find the current city within the edge array
-			while(edges[iterator][0] != currentCity) {
-				iterator ++;
-			}
-			
-			// Select the best edge from the edge array
-			while (edges[iterator][0] == currentCity) {
-				// 1) Check if the departure time of the flight is greater than the previous arrival time
-				// 2) Check if the arrival time is the lowest among the selected city
-				// 3) Check if the the destination of the edge has not been reached
-				if ((edges[iterator][2] > currentTime) && (edges[iterator][3] < leastArrival) && (reached[edges[iterator][1]] == false)) {
-					nextCity = edges[iterator][1];
-					leastArrival = edges[iterator][3];
+			// Finding the candidate with the lowest estimate
+			for (int i = 0; i < numCities; i++) {
+				if ((candidate[i] == true) && (estimate[i] < leastArrival)) {
+					nextCity = i;
+					leastArrival = estimate[i];
 				}
-				
-				// Check for the end of the edge array
-				if (iterator == 13) {
-					break;
-				}
-				
-				iterator++;
 			}
-			
+						
 			// Update the city as reached
-			reached[currentCity] = true;
+			reached[nextCity] = true;
+			candidate[nextCity] = false;
 			cost[nextCity] = leastArrival;
-			predecessor[nextCity] = currentCity;
-			
-			// Move to the next city
-			currentCity = nextCity;
 			currentTime = leastArrival;
 			
-			if (currentCity == destination) {
+			// Check if the destination has been reached
+			if (reached[destination] == true) {
 				break;
+			}
+									
+			// Update the neighbours
+			iterator = cityIndex[nextCity];
+			while (edges[iterator][0] == nextCity) {
+				// 1) Check if the the destination of the edge has not been reached
+				// 2) Check if the departure time of the flight is greater than the previous arrival time
+				// 2) Check if the arrival time is the less than the estimate
+				if (reached[edges[iterator][1]] == false) {
+					if ((edges[iterator][3] < estimate[edges[iterator][1]]) && (edges[iterator][2] > currentTime)) {
+						estimate[edges[iterator][1]] = edges[iterator][3];
+						candidate[edges[iterator][1]] = true;
+						predecessor[edges[iterator][1]] = nextCity;
+					}
+				}
+				
+				if (iterator == (numEdges - 1))
+					break;
+				
+				iterator++;
 			}
 		}
 	}
@@ -95,11 +130,10 @@ public class TravelPlanner {
 		stack.push(destination);
 		
 		int index = destination;
-		while(predecessor[index] != source) {
+		while(predecessor[index] != -1) {
 			stack.push(predecessor[index]);
 			index = predecessor[index];
 		}
-		stack.push(source);
 		
 		String route = "";
 		while (stack.size() > 0) {
@@ -114,8 +148,7 @@ public class TravelPlanner {
 	// Formats the output string for the journey
 	public String toString() {
 		String output;
-		
-		output = "Optimal route from " + destination + " to " + source + "\n";
+		output = "Optimal route from " + source + " to " + destination + "\n";
 		
 		int headingLength = output.length() - 1;
 		for (int i = 0; i < headingLength; i++) {
@@ -123,33 +156,8 @@ public class TravelPlanner {
 		}
 		
 		output += "\n\nFlight path: " + getRoute() + "\n";
-		output += "Arrival time at " + destination + ": " + cost[destination]; 
+		output += "Arrival time at city " + destination + ": " + cost[destination]; 
 		return output;
-	}
-
-	public static void main(String[] args) {
-		
-		int[][] testData = { 
-				 {0, 1, 1, 2},
-				 {0, 1, 3, 6},
-				 {0, 2, 2, 8},
-				 {0, 3, 4, 8},
-				 
-				 {1, 2, 7, 9},
-				 {1, 3, 3, 4},
-				 
-				 {2, 0, 1, 2},
-				 {2, 1, 2, 4},
-				 {2, 3, 1, 4},
-				 {2, 3 ,7 ,8},
-				 
-				 {3, 0, 1, 3},
-				 {3, 0, 6, 8},
-				 {3, 1, 2, 4},
-				 {3, 2, 5, 6} };
-		
-		TravelPlanner graph = new TravelPlanner(testData, 4, 0, 2);
-		System.out.println(graph.toString());
 	}
 	
 }

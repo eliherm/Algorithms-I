@@ -30,3 +30,84 @@
 			}
 			System.out.println();
 		}
+		
+----------------------------------------------------------------
+
+private void findPaths(int[][] edges, int[] cityIndex) {
+		int[] estimate = new int[numCities];
+		boolean[] reached = new boolean[numCities]; // Holds the reached status for each city
+		boolean[] candidate = new boolean[numCities];
+		boolean loop = true;
+		
+		// Initialize the source city
+		currentCity = source;
+		cost[source] = 0;
+		estimate[source] = 0;
+		reached[source] = true;
+		candidate[source] = false;
+		currentTime = -1;
+		
+		// Initialize the other cities as not reached
+		for (int i = 0; i < numCities; i++) {
+			if (i != source) {
+				estimate[i] = Integer.MAX_VALUE;
+				reached[i] = false;
+			}
+		}
+		
+		// Update the estimates of the neighbours
+		int idx = cityIndex[source];
+		while(edges[idx][0] == source) {
+			if (edges[idx][3] < estimate[edges[idx][1]]) {
+				estimate[edges[idx][1]] = edges[idx][3];
+			}
+		}
+		
+		while(loop) {
+			int iterator = cityIndex[currentCity]; // Get the index of the current city
+			int leastArrival = Integer.MAX_VALUE;
+			int nextCity = -1;
+						
+			// Select the best edge from the edge array
+			while (edges[iterator][0] == currentCity) {				
+				// 1) Check if the departure time of the flight is greater than the previous arrival time
+				// 2) Check if the arrival time is the lowest among the selected city
+				// 3) Check if the the destination of the edge has not been reached
+				if ((edges[iterator][2] > currentTime) && (edges[iterator][3] < leastArrival) && (reached[edges[iterator][1]] == false)) {
+					nextCity = edges[iterator][1];
+					leastArrival = edges[iterator][3];
+				}
+				
+				// Check for the end of the edge array
+				if (iterator == (numEdges - 1)) {
+					break;
+				}
+				iterator++;
+			}
+			
+			if (nextCity == -1) {
+				break;
+			}
+			
+			// Update the city as reached
+			reached[currentCity] = true;
+			cost[nextCity] = leastArrival;
+			predecessor[nextCity] = currentCity;
+			
+			// Move to the next city
+			currentCity = nextCity;
+			currentTime = leastArrival;
+			
+//			if (currentCity == destination) {
+//				break;
+//			}
+			
+			loop = false;
+			for (int i = 0; i < numCities; i++) {
+				if (reached[i] == false) {
+					loop = true;
+					break;
+				}
+			}
+		}
+	}
