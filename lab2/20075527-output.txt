@@ -1,5 +1,5 @@
-Optimal route from 27 to 55
+Optimal route from 93 to 49
 ---------------------------
 
-Flight path: 27 -> 55
-Arrival time at city 55: 4
+Flight path: 93 -> 124 -> 49
+Arrival time at city 49: 9
