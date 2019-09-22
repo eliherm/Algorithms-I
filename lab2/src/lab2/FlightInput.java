@@ -87,14 +87,15 @@ public class FlightInput {
 	public static void main(String[] args) {
 		FlightInput data = new FlightInput("/Users/Elikem/Coding-Courses/cmpe365/lab2/data/2019_Lab_2_flights_real_data.txt");
 		TravelPlanner graph = new TravelPlanner(data.getEdges(), data.getIndex(), data.getNumCities(), data.getNumEdges(), 27, 55);
-		
-		// Save output to a file		
+				
 		try {
+			// Save output to a file
 			PrintWriter graphOutput = new PrintWriter("20075527-output.txt");
 			graphOutput.println(graph);
 			graphOutput.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("The output file could not be saved!");
+			System.exit(1);
 		}
 		
 		System.out.println(graph);

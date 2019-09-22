@@ -35,6 +35,7 @@ public class TravelPlanner {
 	}
 		
 	private void findPaths(int[][] edges, int[] cityIndex) {
+		// Check for invalid cities
 		if ((source > numCities - 1) || (destination > numCities - 1)) {
 			System.out.println("Error: Invalid city");
 			System.exit(1);
