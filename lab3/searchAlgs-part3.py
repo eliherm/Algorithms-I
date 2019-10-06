@@ -1,14 +1,18 @@
 def binSearch(Arr, x):
     first = 0
     last = len(Arr) - 1
+    count = 0
 
     while first <= last:
         mid = (first + last) // 2
         if Arr[mid] == x:
-            return mid
+            count += 1
+            return count
         elif Arr[mid] > x:
+            count += 2
             last = mid - 1
         else:
+            count += 2
             first = mid + 1
 
     return -1
@@ -17,15 +21,19 @@ def binSearch(Arr, x):
 def trinSearch(Arr, x):
     first = 0
     last = len(Arr) - 1
+    count = 0
 
     while first <= last:
         t1 = first + (last - first) // 3
 
         if Arr[t1] == x:
-            return t1
+            count += 1
+            return count
         elif Arr[t1] > x:
+            count += 2
             last = t1 - 1
         else:
+            # count += 2
             first = t1 + 1
 
             if first > last:
@@ -33,10 +41,13 @@ def trinSearch(Arr, x):
 
             mid = (first + last) // 2
             if Arr[mid] == x:
-                return mid
+                count += 3
+                return count
             elif Arr[mid] > x:
+                count += 4
                 last = mid - 1
             else:
+                count += 42
                 first = mid + 1
 
     return -1
