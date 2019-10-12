@@ -53,25 +53,54 @@ def trinSearch(Arr, x):
     return -1
 
 
-testArr = [2, 4, 6, 8, 10]
+def avgIterations(Arr):
+    binSearchCounts = []
+    trinSearchCounts = []
 
-# Format the heading
-heading = "Binary Search"
-print(heading)
-for i in heading:
-    print("-", end='')
+    for i in range(1, Arr[len(Arr) - 1] + 1):
+        binSearchCounts.append(binSearch(Arr, i))
+        trinSearchCounts.append(trinSearch(Arr, i))
+
+    results = {
+                'binSearch': sum(binSearchCounts) / len(binSearchCounts),
+                'trinSearch': sum(trinSearchCounts) / len(trinSearchCounts)
+               }
+
+    return results
+
+
+# Test Examples
+test1k = [i*2 for i in range(1, 1001)]
+test2k = [i*2 for i in range(1, 2001)]
+test4k = [i*2 for i in range(1, 4001)]
+test8k = [i*2 for i in range(1, 8001)]
+test16k = [i*2 for i in range(1, 16001)]
+
+avg1k = avgIterations(test1k)
+print("Average for 1,000 values:")
+print("Binary Search: " + str(avg1k['binSearch']))
+print("Trinary Search: " + str(avg1k['trinSearch']))
 print()
 
-for i in range(1, 12):
-    ans = "Finding " + str(i) + ": " + str(binSearch(testArr, i))
-    print(ans)
-
-heading = "\nTrinary Search"
-print(heading)
-for i in heading:
-    print("-", end='')
+avg2k = avgIterations(test2k)
+print("Average for 2,000 values:")
+print("Binary Search: " + str(avg2k['binSearch']))
+print("Trinary Search: " + str(avg2k['trinSearch']))
 print()
 
-for i in range(1, 12):
-    ans = "Finding " + str(i) + ": " + str(binSearch(testArr, i))
-    print(ans)
+avg4k = avgIterations(test4k)
+print("Average for 4,000 values:")
+print("Binary Search: " + str(avg4k['binSearch']))
+print("Trinary Search: " + str(avg4k['trinSearch']))
+print()
+
+avg8k = avgIterations(test8k)
+print("Average for 8,000 values:")
+print("Binary Search: " + str(avg8k['binSearch']))
+print("Trinary Search: " + str(avg8k['trinSearch']))
+print()
+
+avg16k = avgIterations(test16k)
+print("Average for 16,000 values:")
+print("Binary Search: " + str(avg8k['binSearch']))
+print("Trinary Search: " + str(avg8k['trinSearch']))
