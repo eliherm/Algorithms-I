@@ -16,9 +16,9 @@ def f2(s):
 
 
 def f2mod(s):
-    result = 0
+    result = 7
     for c in s:
-        result = (2 * result + ord(c)) % sys.maxsize
+        result = (31 * result + ord(c)) % sys.maxsize
     return result
 
 
@@ -29,18 +29,20 @@ with open("TheSunderingFloodASCII.txt") as input_file:
 
     for line in input_file:
         word_count += 1
-        string_hash1 = f2(line[:-1])
-        string_hash2 = f1(line[:-1])
+        string_hash1 = f2mod(line[:-1])
+        string_hash2 = f2mod(line[:-1])
 
         if string_hash1 in hashtable1:
             hashtable1[string_hash1].append(line[:-1])
         else:
             hashtable1[string_hash1] = [line[:-1]]
 
+        """
         if string_hash2 in hashtable2:
             hashtable2[string_hash2].append(line[:-1])
         else:
             hashtable1[string_hash2] = [line[:-1]]
+        """
 
     false_count = 0
     for hash_val in hashtable1.items():
@@ -49,4 +51,4 @@ with open("TheSunderingFloodASCII.txt") as input_file:
                 if hash_val[1][idx] != hash_val[1][idx - 1]:
                     false_count += 1
 
-    print(false_count)
+    print(false_count / word_count)

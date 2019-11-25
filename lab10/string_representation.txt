@@ -1,0 +1,6 @@
+Strings were converted to integers using a hashing function that adds every character's ASCII value to a result
+variable that is multiplied by 31. This function was based off the algorithm presented in experiment 3 of lab 9. The
+value 31 was chosen as it is prime and will generally result in less collisions (instances where two strings map to the
+same number). In addition, modular arithmetic was used to ensure that the hash value does not overflow. The sys.maxsize
+variable represents the maximum size of an integer for a computer and was used to ensure that the hash value never
+overflows the size of an integer.
